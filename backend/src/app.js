@@ -32,13 +32,19 @@ export function createApp(options = {}) {
       return
     }
 
+    // Jira API 回傳 labels 時會依字母排序，不保證與建票時送出的順序一致，
+    // 不能用陣列位置判斷，要用內容本身分類。
     const labels = body.fields?.labels || []
+    const EXECUTOR_TYPES = new Set(['AI', 'manual'])
+    const executorType = labels.find((label) => EXECUTOR_TYPES.has(label))
+    const role = labels.find((label) => !EXECUTOR_TYPES.has(label))
+
     res.json({
       key: body.key,
       summary: body.fields?.summary,
       status: body.fields?.status?.name,
-      role: labels[0],
-      executorType: labels[1],
+      role,
+      executorType,
     })
   })
 

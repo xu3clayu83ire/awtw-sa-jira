@@ -25,7 +25,8 @@ describe('GET /api/jira/issue/:key', () => {
         fields: {
           summary: '測試任務',
           status: { name: 'To Do' },
-          labels: ['backend', 'AI'],
+          // Jira API 會把 labels 依字母排序回傳，不保證原本送出的順序
+          labels: ['AI', 'backend'],
         },
       }),
     })
