@@ -32,9 +32,19 @@ describe('syncDocs', () => {
     expect(fs.existsSync(designPath)).toBe(true)
 
     const requirementContent = fs.readFileSync(requirementPath, 'utf-8')
-    expect(requirementContent).toMatch(/^---\ntitle: "requirement"\nweight: \d+\n---\n\n# 需求內容/)
+    expect(requirementContent).toMatch(/^---\ntitle: "需求文件"\nweight: \d+\n---\n\n# 需求內容/)
 
     // jira-issues.json 不是文件，不該被同步
     expect(fs.existsSync(path.join(contentDir, 'feature-a', 'jira-issues.json'))).toBe(false)
+  })
+
+  it('應該_產出_index.md讓Hugo辨識為區塊_當同步功能目錄', () => {
+    syncDocs({ specDir, contentDir })
+
+    const indexPath = path.join(contentDir, 'feature-a', '_index.md')
+    expect(fs.existsSync(indexPath)).toBe(true)
+
+    const content = fs.readFileSync(indexPath, 'utf-8')
+    expect(content).toContain('title: "feature-a"')
   })
 })

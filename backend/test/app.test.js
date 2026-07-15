@@ -25,6 +25,7 @@ describe('GET /api/jira/issue/:key', () => {
         fields: {
           summary: '測試任務',
           status: { name: 'To Do' },
+          labels: ['backend', 'AI'],
         },
       }),
     })
@@ -37,6 +38,8 @@ describe('GET /api/jira/issue/:key', () => {
       key: 'ASJ-115',
       summary: '測試任務',
       status: 'To Do',
+      role: 'backend',
+      executorType: 'AI',
     })
 
     const [calledUrl, calledOptions] = global.fetch.mock.calls[0]

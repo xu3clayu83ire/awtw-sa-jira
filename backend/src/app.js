@@ -32,10 +32,13 @@ export function createApp(options = {}) {
       return
     }
 
+    const labels = body.fields?.labels || []
     res.json({
       key: body.key,
       summary: body.fields?.summary,
       status: body.fields?.status?.name,
+      role: labels[0],
+      executorType: labels[1],
     })
   })
 
