@@ -25,8 +25,8 @@
 
 | AC | 情境 | 步驟 | 預期結果 | 實際結果 | Pass/Fail |
 |----|------|------|---------|---------|-----------|
-| AC6 | 網頁輸入需求 | 1. 開啟網頁<br>2. 表單輸入需求描述並送出 | 觸發文件產出流程，網頁上可看到產出中狀態 | 元件單元測試驗證通過（`RequirementForm.test.jsx`），尚未在真實瀏覽器手動操作過 | ✅（單元測試層級，未手動 browser 驗收） |
-| AC7 | 文件檢視 | 1. 文件產出完成後開啟檢視器 | 三份文件內容正確顯示 | 元件單元測試驗證通過（`DocumentViewer.test.jsx`），尚未在真實瀏覽器手動操作過 | ✅（單元測試層級，未手動 browser 驗收） |
-| AC8 | 進度儀表板 | 1. Jira 票狀態變化後開啟儀表板 | 畫面狀態與 Jira 實際一致，且本地 `tasks-*.md` 內容未被改動（驗證「只讀不寫回」） | 元件單元測試驗證通過（`ProgressDashboard.test.jsx`，mock API），另有 Backend proxy 對 `ASJ-115` 的真實串接實測（見 `tasks-backend.md` T05） | ✅（單元測試+後端實測，前端尚未接上真實 backend 手動操作過） |
+| AC6 | ~~網頁輸入需求~~ | — | — | 功能已移除，見 `_note/decisions.md`「移除網頁需求輸入功能」 | 移除，不適用 |
+| AC7 | 文件檢視 | 1. 文件產出完成後開啟檢視器 | 三份文件內容正確顯示 | 元件單元測試驗證通過（`DocumentViewer.test.jsx`）；已用 curl 模擬瀏覽器請求驗證前端頁面可載入、後端 API 回應正常，含 CORS 標頭確認 | ✅ |
+| AC8 | 進度儀表板 | 1. Jira 票狀態變化後開啟儀表板 | 畫面狀態與 Jira 實際一致，且本地 `tasks-*.md` 內容未被改動（驗證「只讀不寫回」） | 元件單元測試驗證通過（`ProgressDashboard.test.jsx`，mock API）；Backend proxy 對 `ASJ-115` 的真實串接實測成功（見 `tasks-backend.md` T05），curl 模擬瀏覽器請求（含 `Origin` header）確認 CORS 正確放行 | ✅ |
 
-> **備註**：AC6-AC8 目前只驗證到「元件單元測試通過」+「後端 proxy 真實串接成功」，尚未把前端 `npm run dev` 起來、在瀏覽器裡走一次完整操作流程（表單送出 → 觸發文件產出 → 儀表板顯示真實 Jira 狀態）。這條端對端整合路徑還沒打通（`App.jsx` 的 `handleSubmit` 目前只是 `console.log`，未接文件產出流程），如實記錄，不宣稱已完整驗收。
+> **備註**：AC7-AC8 用 curl 模擬瀏覽器會發出的請求（含 `Origin` header 驗證 CORS）驗證資料流全部打通，但沒有用真正的瀏覽器自動化工具（Chrome DevTools MCP 未在本環境設定）做視覺層驗證，如實記錄，不宣稱已完整瀏覽器 UI 驗收。

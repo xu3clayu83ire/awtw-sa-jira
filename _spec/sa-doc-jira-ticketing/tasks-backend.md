@@ -80,3 +80,9 @@ workflow 完整內容備份於 `_infra/n8n-workflows/sa-jira-ticketing.json`（�
 - 🔴 紅燈確認：proxy 未實作前，前端無法取得票狀態 ✅ 已重現（module not found）
 - 🟢 綠燈確認：呼叫 proxy 查詢 `ASJ-115`，回傳正確的票狀態資訊，且瀏覽器開發者工具的網路請求中看不到 Jira API Token ✅ 已於 2026-07-15 實測，回傳 `{"key":"ASJ-115","summary":"[T測試] n8n自動建票驗證","status":"待辦事項"}`，token 只存在 proxy 端 `.env`（已加入 `.gitignore`），不會出現在前端請求或回應中
 - 單元測試覆蓋率 100% ✅ 2 個測試皆通過（含 mock 404 錯誤路徑）
+
+---
+
+### T06 — 「送出需求」端點 ❌ 已移除，不做
+
+**移除原因**（2026-07-15）：原本縮小範圍成「只存成 `_idea/<日期時間>.md`」，但實測後判定使用者還是要回來跟 Claude Code 對話才能真正產出文件，這一圈繞路沒有實質省事。`/api/requirements` 端點與其測試已刪除，前端維持純查詢功能。詳見 `_note/decisions.md`。

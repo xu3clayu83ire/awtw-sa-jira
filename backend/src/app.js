@@ -1,7 +1,9 @@
 import express from 'express'
+import cors from 'cors'
 
 export function createApp() {
   const app = express()
+  app.use(cors())
 
   app.get('/api/jira/issue/:key', async (req, res) => {
     const { key } = req.params
