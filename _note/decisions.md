@@ -43,6 +43,12 @@
 - **異動範圍**：刪除 `RequirementForm.jsx`／`.test.jsx`、後端 `/api/requirements` 端點與測試；`App.jsx` 移除表單；`requirement.md`／`design.md`／`tasks-frontend.md`／`tasks-backend.md` 同步更新
 - **取捨**：如果之後真的想要「網頁直接輸入需求就自動產文件」的體驗，必須後端接 Claude API 自己完成整個 saspec 流程（見上一筆決策的選項 B），屬於下一版才考慮的大工程，不是現在這種輕量調整能達成
 
+### [2026-07-15] 事故記錄：為了存檔重複呼叫建票 Webhook，導致重複建票
+- **問題**：`whisperx-transcription` 案子第一次呼叫 n8n Webhook 成功建立 11 張 Jira 票（`ASJ-116`~`ASJ-126`）後，為了把回應內容寫成 `jira-issues.json`，又重新呼叫了一次同一個 Webhook，導致又建立 11 張重複的票（`ASJ-127`~`ASJ-137`），總共變成 22 張
+- **根因**：忘記 Webhook 呼叫是有副作用的（會真的建立 Jira 票），把它當成單純可以重複呼叫拿資料的唯讀查詢來用；應該直接沿用第一次呼叫已經拿到的回應內容寫檔案
+- **處理**：用 Jira REST API `DELETE /rest/api/3/issue/{key}` 刪除第二批 11 張重複票（`ASJ-127`~`ASJ-137`），保留第一批，確認 `ASJ-116` 內容正確後才寫入 `jira-issues.json`
+- **後續規則**：**任何一次成功呼叫 T01 建票 Webhook 後，該次回應內容就是唯一真相來源**，需要用到這份回應（例如寫 `jira-issues.json`）一律沿用同一次呼叫的結果，禁止為了取得回應內容而重新呼叫 Webhook
+
 ---
 
 ## API 設計決策
