@@ -1,0 +1,341 @@
+{
+  "updatedAt": "2026-07-15T11:07:44.276Z",
+  "createdAt": "2026-07-15T10:27:41.830Z",
+  "id": "fmqhDagLbc9BSf0b",
+  "name": "sa-jira-ticketing",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sa-jira-ticketing",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "sa-jira-ticketing"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst payload = raw.body || raw;\nconst tasks = payload.tasks || [];\nif (!Array.isArray(tasks) || tasks.length === 0) {\n  throw new Error('tasks 欄位缺漏或為空陣列');\n}\nreturn tasks.map(task => {\n  if (!task.title || !task.role || !task.executorType) {\n    return { json: { _error: true, reason: `任務缺少必填欄位: ${JSON.stringify(task)}` } };\n  }\n  return {\n    json: {\n      fields: {\n        project: { key: 'ASJ' },\n        summary: task.title,\n        issuetype: { name: 'Task' },\n        labels: [task.role, task.executorType]\n      }\n    }\n  };\n});"
+      },
+      "id": "code-node-1",
+      "name": "Parse Task Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://prostyliu.atlassian.net/rest/api/3/issue",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { fields: $json.fields } }}",
+        "options": {}
+      },
+      "id": "http-node-1",
+      "name": "Create Jira Issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "yxB1ChdyDb8goUKo",
+          "name": "Jira ASJ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $input.all();\nconst issues = [];\nconst errors = [];\nfor (const item of results) {\n  const j = item.json;\n  if (j._error) {\n    errors.push(j.reason);\n  } else if (j.error || j.errorMessages) {\n    errors.push(JSON.stringify(j));\n  } else if (j.key) {\n    issues.push({ key: j.key, url: j.self || null });\n  } else {\n    errors.push('未知回應格式: ' + JSON.stringify(j));\n  }\n}\nreturn [{\n  json: {\n    created: issues.length,\n    issues,\n    errors: errors.length > 0 ? errors : undefined\n  }\n}];"
+      },
+      "id": "code-node-2",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": "={{ $json.errors ? 207 : 200 }}"
+        }
+      },
+      "id": "respond-node-1",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Task Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Task Payload": {
+      "main": [
+        [
+          {
+            "node": "Create Jira Issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Jira Issue": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "fed733dd-e9b1-4757-82c0-83a88aa7e4d0",
+  "activeVersionId": "fed733dd-e9b1-4757-82c0-83a88aa7e4d0",
+  "versionCounter": 4,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "shared": [
+    {
+      "updatedAt": "2026-07-15T10:27:41.834Z",
+      "createdAt": "2026-07-15T10:27:41.834Z",
+      "role": "workflow:owner",
+      "workflowId": "fmqhDagLbc9BSf0b",
+      "projectId": "7uI4RhLiweWnWaN9",
+      "project": {
+        "updatedAt": "2026-06-30T14:02:21.515Z",
+        "createdAt": "2026-06-30T13:58:32.756Z",
+        "id": "7uI4RhLiweWnWaN9",
+        "name": "admin admin <admin@admin.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "ad555fc5-0592-405a-9238-266c1f809c31"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-07-15T11:07:44.277Z",
+    "createdAt": "2026-07-15T11:07:44.277Z",
+    "versionId": "fed733dd-e9b1-4757-82c0-83a88aa7e4d0",
+    "workflowId": "fmqhDagLbc9BSf0b",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "sa-jira-ticketing",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "webhook-node-1",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          240,
+          300
+        ],
+        "webhookId": "sa-jira-ticketing"
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = $input.first().json;\nconst payload = raw.body || raw;\nconst tasks = payload.tasks || [];\nif (!Array.isArray(tasks) || tasks.length === 0) {\n  throw new Error('tasks 欄位缺漏或為空陣列');\n}\nreturn tasks.map(task => {\n  if (!task.title || !task.role || !task.executorType) {\n    return { json: { _error: true, reason: `任務缺少必填欄位: ${JSON.stringify(task)}` } };\n  }\n  return {\n    json: {\n      fields: {\n        project: { key: 'ASJ' },\n        summary: task.title,\n        issuetype: { name: 'Task' },\n        labels: [task.role, task.executorType]\n      }\n    }\n  };\n});"
+        },
+        "id": "code-node-1",
+        "name": "Parse Task Payload",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://prostyliu.atlassian.net/rest/api/3/issue",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ { fields: $json.fields } }}",
+          "options": {}
+        },
+        "id": "http-node-1",
+        "name": "Create Jira Issue",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          680,
+          300
+        ],
+        "continueOnFail": true,
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "yxB1ChdyDb8goUKo",
+            "name": "Jira ASJ"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const results = $input.all();\nconst issues = [];\nconst errors = [];\nfor (const item of results) {\n  const j = item.json;\n  if (j._error) {\n    errors.push(j.reason);\n  } else if (j.error || j.errorMessages) {\n    errors.push(JSON.stringify(j));\n  } else if (j.key) {\n    issues.push({ key: j.key, url: j.self || null });\n  } else {\n    errors.push('未知回應格式: ' + JSON.stringify(j));\n  }\n}\nreturn [{\n  json: {\n    created: issues.length,\n    issues,\n    errors: errors.length > 0 ? errors : undefined\n  }\n}];"
+        },
+        "id": "code-node-2",
+        "name": "Aggregate Results",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          900,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ $json }}",
+          "options": {
+            "responseCode": "={{ $json.errors ? 207 : 200 }}"
+          }
+        },
+        "id": "respond-node-1",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1120,
+          300
+        ]
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Parse Task Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Task Payload": {
+        "main": [
+          [
+            {
+              "node": "Create Jira Issue",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Jira Issue": {
+        "main": [
+          [
+            {
+              "node": "Aggregate Results",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate Results": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "admin admin",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-07-15T11:07:44.300Z",
+        "id": 111,
+        "workflowId": "fmqhDagLbc9BSf0b",
+        "versionId": "fed733dd-e9b1-4757-82c0-83a88aa7e4d0",
+        "event": "activated",
+        "userId": "ad555fc5-0592-405a-9238-266c1f809c31"
+      },
+      {
+        "createdAt": "2026-07-15T11:07:44.294Z",
+        "id": 110,
+        "workflowId": "fmqhDagLbc9BSf0b",
+        "versionId": "fed733dd-e9b1-4757-82c0-83a88aa7e4d0",
+        "event": "deactivated",
+        "userId": "ad555fc5-0592-405a-9238-266c1f809c31"
+      }
+    ]
+  }
+}
