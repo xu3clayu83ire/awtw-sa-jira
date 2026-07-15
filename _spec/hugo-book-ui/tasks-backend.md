@@ -34,15 +34,21 @@
 
 ---
 
-### T03 — 實作進度儀表板頁面（Hugo 自訂 layout + Alpine.js） ⬜　🤖 AI 執行
+### T03 — 實作進度儀表板頁面（Hugo 自訂 layout + Alpine.js） ✅　🤖 AI 執行
 
 **依賴**：`tasks-devops.md` T03
 
 依 `design.md` 與已確認的 mockup 畫面，做出摘要條（總票數／待辦／進行中／已完成）+ 票號表格（票號、任務、角色、執行方式、狀態），用 Alpine.js `fetch` backend proxy API。
 
+實作方式：
+- `hugo-docs/hugo.toml` 開啟 `[markup.goldmark.renderer] unsafe = true`，允許 markdown 內嵌原生 HTML/JS
+- `hugo-docs/layouts/_partials/docs/inject/head.html`：注入 Alpine.js CDN（hugo-book 官方預留的擴充點，不用改主題原始碼）
+- `hugo-docs/layouts/_partials/docs/inject/content-before.html`：注入儀表板樣式
+- `backend/scripts/generate-progress-pages.js`：為每個功能產出 `content/docs/<功能>/progress.md`，內嵌 Alpine.js `dashboard()` 元件，`fetch` backend proxy 的 `/api/features/:feature/issues`、`/api/jira/issue/:key`
+
 **完成定義**：
-- 🔴 紅燈確認：頁面未實作前，選單裡沒有「進度儀表板」連結
-- 🟢 綠燈確認：點選任一功能的「進度儀表板」，畫面正確顯示該功能的 Jira 票號、狀態分類數量正確
+- 🔴 紅燈確認：頁面未實作前，選單裡沒有「進度儀表板」連結 ✅ 已重現
+- 🟢 綠燈確認：點選任一功能的「進度儀表板」，畫面正確顯示該功能的 Jira 票號、狀態分類數量正確 ✅ 已於 2026-07-15 實測，`whisperx-transcription` 進度頁面正確產出，`x-data` 綁定正確帶入功能名稱與 API base URL；受限於本環境沒有 Chrome DevTools MCP，未做視覺層瀏覽器截圖驗證，只驗證了 HTML/JS 輸出正確、API 端點本身可用（見 `tasks-backend.md` T05、T07-T09）
 
 ---
 

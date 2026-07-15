@@ -7,3 +7,7 @@ defaultContentLanguage = "zh-tw"
   BookMenuFromFiles = true
   BookToC = true
   BookSearch = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+
