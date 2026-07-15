@@ -1,9 +1,9 @@
 # 技術棧規範
 
-## 前端（Frontend Phase 2 — 獨立網頁）
-- 框架：React + Vite
-- 語言：JavaScript（PoC 規模，不引入 TypeScript 建置複雜度）
-- 頁面：需求輸入表單、文件檢視器（Markdown 渲染）、進度儀表板
+## 前端（改用文件站樣式，見 `_spec/hugo-book-ui/`）
+- 框架：Hugo + `hugo-book` 主題（比照 `awtw-short-url-service-agent/hugo-docs`）
+- 進度儀表板：Hugo 自訂 layout 頁面 + Alpine.js（輕量互動，無 build 步驟）
+- ~~舊方案（React + Vite，`frontend/`）已淘汰，見 `_spec/hugo-book-ui/tasks-backend.md` T04~~
 
 ## 後端（輕量 proxy）
 - 框架：Node.js + Express
