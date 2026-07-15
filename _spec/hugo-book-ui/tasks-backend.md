@@ -9,17 +9,17 @@
 
 ## Phase 1 — 文件同步與儀表板頁面（~2h）
 
-### T01 — 撰寫文件同步腳本 ⬜　🤖 AI 執行
+### T01 — 撰寫文件同步腳本 ✅　🤖 AI 執行
 
 **依賴**：`tasks-devops.md` T03
 
-讀取 `_spec/<功能>/*.md`，複製到 `hugo-docs/content/docs/<功能>/*.md`，補上 Hugo 需要的 front matter（`title`、`weight`）。
+讀取 `_spec/<功能>/*.md`，複製到 `hugo-docs/content/docs/<功能>/*.md`，補上 Hugo 需要的 front matter（`title`、`weight`）。實作於 `backend/scripts/sync-docs.js`。
 
 **完成定義**：
 - 測試命名：`應該_同步文件並補上front matter_當_spec目錄存在對應功能`
-- 🔴 紅燈確認：腳本未實作前，`content/docs/` 底下沒有對應檔案
-- 🟢 綠燈確認：執行腳本，`content/docs/<功能>/` 出現對應 `.md` 檔案，開頭有正確的 front matter
-- 單元測試覆蓋率 100%
+- 🔴 紅燈確認：腳本未實作前，`content/docs/` 底下沒有對應檔案 ✅ 已重現
+- 🟢 綠燈確認：執行腳本，`content/docs/<功能>/` 出現對應 `.md` 檔案，開頭有正確的 front matter ✅ 已測試通過
+- 單元測試覆蓋率 100% ✅
 
 ---
 
