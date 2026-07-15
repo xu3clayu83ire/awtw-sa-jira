@@ -40,7 +40,8 @@ flowchart LR
 | 文件產出模組 | 執行 `/addyosmani-saspec`，依序產出 requirement.md／design.md／tasks-*.md | AI（Claude Code） |
 | 任務轉換模組 | 把 tasks-*.md 中的任務表格轉換成 JSON，POST 到 n8n Webhook | AI（Claude Code，對話中直接呼叫） |
 | n8n 建票 workflow | 接收 Webhook → 解析 JSON → 逐筆呼叫 Jira REST API 建票 → 回傳結果 | Backend |
-| （下一階段）進度儀表板網頁 | 輸入需求表單、文件檢視器、讀取 Jira 狀態顯示進度 | Frontend |
+| 獨立網頁（Frontend Phase 2） | 需求輸入表單、文件檢視器、進度儀表板 UI | Frontend |
+| Jira 查詢 proxy（Frontend Phase 2） | 前端與 Jira REST API 之間的輕量後端，持有 Jira credential，前端不直接接觸憑證，只服務「讀取票狀態」 | Backend |
 
 ## 資料模型
 

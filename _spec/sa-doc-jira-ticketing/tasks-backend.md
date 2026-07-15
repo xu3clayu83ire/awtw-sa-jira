@@ -64,3 +64,19 @@ workflow 完整內容備份於 `_infra/n8n-workflows/sa-jira-ticketing.json`（�
 - 🔴 紅燈確認：轉換邏輯未實作前，無法產出合法 JSON
 - 🟢 綠燈確認：✅ 已於 2026-07-15 以本專案 `tasks-frontend.md`／`tasks-qa.md` 的真實任務內容做 dry-run 轉換測試，輸出的 JSON 欄位結構與 T02 schema 完全對應（本次依使用者要求僅驗證結構，未呼叫 Webhook、未建立真實 Jira 票）
 - 單元測試覆蓋率 100%
+
+---
+
+## Phase 2 — Jira 查詢 proxy（~1h，全部 🤖，隨 Frontend Phase 2 一起開發）
+
+### T05 — 實作 Jira 查詢 proxy（Node.js + Express） ✅　🤖 AI 執行
+
+**依賴**：`tasks-devops.md` T02（Jira credential）
+
+只服務「讀取 Jira 票狀態」這個需求，不做其他業務邏輯。前端不直接持有 Jira credential，一律透過這層 proxy 查詢。詳見 `_note/decisions.md`「Frontend Phase 2 新增輕量 Node.js proxy 後端」。
+
+**完成定義**：
+- 測試命名：`應該_回傳票狀態_當查詢有效的Jira票號`
+- 🔴 紅燈確認：proxy 未實作前，前端無法取得票狀態 ✅ 已重現（module not found）
+- 🟢 綠燈確認：呼叫 proxy 查詢 `ASJ-115`，回傳正確的票狀態資訊，且瀏覽器開發者工具的網路請求中看不到 Jira API Token ✅ 已於 2026-07-15 實測，回傳 `{"key":"ASJ-115","summary":"[T測試] n8n自動建票驗證","status":"待辦事項"}`，token 只存在 proxy 端 `.env`（已加入 `.gitignore`），不會出現在前端請求或回應中
+- 單元測試覆蓋率 100% ✅ 2 個測試皆通過（含 mock 404 錯誤路徑）
