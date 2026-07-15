@@ -1,3 +1,8 @@
+---
+title: "tasks-backend"
+weight: 4
+---
+
 # 網頁 UI 改用文件站樣式呈現 — Backend 任務
 
 ## 前置閱讀
@@ -23,14 +28,14 @@
 
 ---
 
-### T02 — 同步既有兩個功能的文件 ✅　🤖 AI 執行
+### T02 — 同步既有兩個功能的文件 ⬜　🤖 AI 執行
 
 **依賴**：T01
 
 對 `sa-doc-jira-ticketing`、`whisperx-transcription`（以及本功能 `hugo-book-ui` 自己）執行同步腳本。
 
 **完成定義**：
-- 🟢 綠燈確認：`hugo server` 啟動後，左側選單能看到三個功能，點進去能看到對應文件內容 ✅ 已於 2026-07-15 實測，三個功能皆出現在選單，`requirement.md` 內容正確渲染
+- 🟢 綠燈確認：`hugo server` 啟動後，左側選單能看到三個功能，點進去能看到對應文件內容
 
 ---
 
