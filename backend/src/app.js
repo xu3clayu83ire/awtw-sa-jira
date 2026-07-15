@@ -1,7 +1,14 @@
 import express from 'express'
 import cors from 'cors'
+import fs from 'node:fs'
+import path from 'node:path'
 
-export function createApp() {
+function defaultSpecDir() {
+  return path.join(process.cwd(), '..', '_spec')
+}
+
+export function createApp(options = {}) {
+  const specDir = options.specDir || defaultSpecDir()
   const app = express()
   app.use(cors())
 
@@ -30,6 +37,44 @@ export function createApp() {
       summary: body.fields?.summary,
       status: body.fields?.status?.name,
     })
+  })
+
+  app.get('/api/features', (req, res) => {
+    if (!fs.existsSync(specDir)) {
+      res.json([])
+      return
+    }
+    const features = fs
+      .readdirSync(specDir, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+    res.json(features)
+  })
+
+  app.get('/api/documents/:feature', (req, res) => {
+    const featureDir = path.join(specDir, req.params.feature)
+    if (!fs.existsSync(featureDir)) {
+      res.status(404).json({ error: '找不到這個功能' })
+      return
+    }
+
+    const documents = {}
+    for (const filename of fs.readdirSync(featureDir)) {
+      if (filename.endsWith('.md')) {
+        documents[filename] = fs.readFileSync(path.join(featureDir, filename), 'utf-8')
+      }
+    }
+    res.json(documents)
+  })
+
+  app.get('/api/features/:feature/issues', (req, res) => {
+    const issuesFile = path.join(specDir, req.params.feature, 'jira-issues.json')
+    if (!fs.existsSync(issuesFile)) {
+      res.json({ created: 0, issues: [] })
+      return
+    }
+    const content = JSON.parse(fs.readFileSync(issuesFile, 'utf-8'))
+    res.json(content)
   })
 
   return app

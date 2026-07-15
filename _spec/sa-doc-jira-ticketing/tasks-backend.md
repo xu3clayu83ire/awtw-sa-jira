@@ -59,6 +59,8 @@ workflow 完整內容備份於 `_infra/n8n-workflows/sa-jira-ticketing.json`（�
 
 在 Claude Code 對話流程中，使用者確認 tasks 文件後，AI 直接把任務表格轉換為 `TaskPayload` JSON 並呼叫 T01 建立的 Webhook（透過 `curl` 或等效 HTTP 呼叫）。不透過 Notion 中介，減少人工搬運步驟。
 
+**更新（2026-07-15）**：Webhook 回應（`{created, issues}`）需寫入 `_spec/<功能>/jira-issues.json`，供 T09 端點讀取，讓網頁進度儀表板能動態顯示這個功能對應的票號，不用寫死在前端程式碼。
+
 **完成定義**：
 - 測試命名：`應該_正確轉換tasks文件為TaskPayload_當四份tasks文件都已確認`
 - 🔴 紅燈確認：轉換邏輯未實作前，無法產出合法 JSON
@@ -80,6 +82,45 @@ workflow 完整內容備份於 `_infra/n8n-workflows/sa-jira-ticketing.json`（�
 - 🔴 紅燈確認：proxy 未實作前，前端無法取得票狀態 ✅ 已重現（module not found）
 - 🟢 綠燈確認：呼叫 proxy 查詢 `ASJ-115`，回傳正確的票狀態資訊，且瀏覽器開發者工具的網路請求中看不到 Jira API Token ✅ 已於 2026-07-15 實測，回傳 `{"key":"ASJ-115","summary":"[T測試] n8n自動建票驗證","status":"待辦事項"}`，token 只存在 proxy 端 `.env`（已加入 `.gitignore`），不會出現在前端請求或回應中
 - 單元測試覆蓋率 100% ✅ 2 個測試皆通過（含 mock 404 錯誤路徑）
+
+---
+
+### T07 — 新增端點：列出所有已產出的功能（`GET /api/features`） ✅　🤖 AI 執行
+
+讀取 `_spec/` 底下的資料夾清單，回傳給前端做選單。
+
+**完成定義**：
+- 測試命名：`應該_回傳功能清單_當_spec目錄下有子資料夾`
+- 🔴 紅燈確認：端點未實作前，前端無法取得功能清單
+- 🟢 綠燈確認：回傳陣列，內容與 `_spec/` 底下實際資料夾一致
+- 單元測試覆蓋率 100%
+
+---
+
+### T08 — 新增端點：讀取指定功能的文件（`GET /api/documents/:feature`） ✅　🤖 AI 執行
+
+**依賴**：T07
+
+讀取 `_spec/<feature>/*.md`，回傳 `{ 檔名: 內容 }` 物件。
+
+**完成定義**：
+- 測試命名：`應該_回傳該功能所有文件內容_當功能存在`
+- 🔴 紅燈確認：端點未實作前，前端無法取得文件內容
+- 🟢 綠燈確認：回傳物件的 key 與 `_spec/<feature>/` 底下實際 `.md` 檔名一致，value 為檔案內容
+- 單元測試覆蓋率 100%
+
+---
+
+### T09 — 新增端點：讀取指定功能已建立的 Jira 票（`GET /api/features/:feature/issues`） ✅　🤖 AI 執行
+
+讀取 `_spec/<feature>/jira-issues.json`（由 T04 任務轉換模組呼叫 Webhook 後寫入，見 T04 更新），檔案不存在時回傳空陣列。
+
+**完成定義**：
+- 測試命名：`應該_回傳票號清單_當jira-issues.json存在`
+- 測試命名：`應該_回傳空陣列_當jira-issues.json不存在`
+- 🔴 紅燈確認：端點未實作前，前端無法取得票號清單
+- 🟢 綠燈確認：兩種情境皆回傳正確結果
+- 單元測試覆蓋率 100%
 
 ---
 
