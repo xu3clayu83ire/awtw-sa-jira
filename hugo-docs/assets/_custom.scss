@@ -93,12 +93,12 @@
 }
 
 // 「依賴」「完成定義」這類 bold 標籤，是讀者掃描文件時要找的視覺路標，
-// 不能太小太淡；用 accent 色 + 大寫字距跟標題的粗體區隔開，但要一眼看到
+// 用黑色（跟內文同色）+ 大寫字距做區隔，不用額外的 accent 色
 .book-article p > strong:only-child {
   display: inline-block;
   font-size: 0.95em;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-accent-default);
+  color: var(--body-font-color);
   font-weight: 700;
 }
