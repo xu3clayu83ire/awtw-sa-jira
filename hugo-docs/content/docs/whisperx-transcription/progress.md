@@ -29,6 +29,7 @@ bookToC: false
                     :class="{
                       'todo': issue.status === '待辦事項',
                       'progress': issue.status === '進行中',
+                      'review': issue.status === '審核中',
                       'done': issue.status === '完成'
                     }"
                     x-text="issue.status"></span>
