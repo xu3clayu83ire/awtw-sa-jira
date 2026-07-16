@@ -3,32 +3,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const article = document.querySelector('.book-article')
   if (!article) return
 
-  // 把每個 h3（任務標題）跟它後面的內容（到下一個 hr/h2/h3 為止）包成一張卡片，
-  // 不改 markdown 原始檔，只在瀏覽器裡重組已渲染出來的 DOM。
-  const children = Array.from(article.children)
-  let currentCard = null
+  // 任務標題（h3）結尾通常是「⬜／✅　🤖／👤 AI/手動 執行」，
+  // 把這段抽出來做成狀態徽章，一眼看出任務完不完成，不用整段夾在標題文字裡讀
+  article.querySelectorAll('h3').forEach((h3) => {
+    const anchor = h3.querySelector('a.anchor')
+    const textNode = Array.from(h3.childNodes).find((n) => n.nodeType === Node.TEXT_NODE && /[⬜✅]/.test(n.textContent))
+    if (!textNode) return
 
-  children.forEach((el) => {
-    if (el.tagName === 'H3') {
-      currentCard = document.createElement('div')
-      currentCard.className = 'task-card'
-      el.parentNode.insertBefore(currentCard, el)
-      currentCard.appendChild(el)
-    } else if (el.tagName === 'HR' || el.tagName === 'H2' || el.tagName === 'H1') {
-      currentCard = null
-    } else if (currentCard) {
-      currentCard.appendChild(el)
+    const match = textNode.textContent.match(/^(.*?)([⬜✅].*)$/)
+    if (!match) return
+
+    const [, title, statusText] = match
+    textNode.textContent = title.trimEnd()
+
+    const badge = document.createElement('span')
+    badge.className = statusText.includes('✅') ? 'status-badge status-done' : 'status-badge status-pending'
+    badge.textContent = statusText.trim()
+
+    if (anchor) {
+      h3.insertBefore(badge, anchor)
+    } else {
+      h3.appendChild(badge)
     }
   })
 
-  // 完成定義清單裡混著測試命名/紅燈/綠燈/覆蓋率，用文字內容分類，
-  // 讓不同性質的項目視覺上區分開（純 CSS 選擇器做不到按文字內容分類）
+  // 完成定義清單：依文字內容分類，並找出已經驗證通過的項目（含 ✅）特別標示出來，
+  // 讓「這個任務目前做到哪」一目了然（純 CSS 選擇器無法依文字內容判斷，用 JS 加 class）
   article.querySelectorAll('li').forEach((li) => {
     const text = li.textContent.trim()
-    if (text.startsWith('🔴')) li.classList.add('dod-red')
-    else if (text.startsWith('🟢')) li.classList.add('dod-green')
-    else if (text.startsWith('測試命名')) li.classList.add('dod-testname')
+    if (text.startsWith('測試命名')) li.classList.add('dod-testname')
     else if (text.includes('覆蓋率')) li.classList.add('dod-coverage')
+
+    if (text.startsWith('🔴') || text.startsWith('🟢')) {
+      li.classList.add('dod-check')
+      // 已補上「✅ 已於...」代表這條驗收條件真的驗證過了，不是只是寫規則
+      if (/✅/.test(text)) {
+        li.classList.add('dod-verified')
+      }
+    }
   })
 })
 </script>

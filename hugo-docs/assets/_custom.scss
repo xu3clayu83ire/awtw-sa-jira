@@ -131,7 +131,7 @@
     font-size: 0.78em;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--gray-500);
+    color: var(--body-font-color);
     font-weight: 600;
     background: var(--bg-raised);
   }
@@ -153,39 +153,40 @@
   box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
-// ── 任務卡片：由 inject/body.html 的 JS 在載入後動態包裝而成 ──
-// （不改 markdown 原始檔，只重組渲染後的 DOM）
-.task-card {
-  border: 1px solid var(--gray-200);
-  border-radius: 10px;
-  padding: 4px 20px 18px;
-  margin: 20px 0;
-  background: var(--bg-raised);
+// ── 任務狀態徽章：由 inject/body.html 的 JS 從標題文字尾端抽出來（⬜/✅ 那段），
+// 讓「這個任務做完了沒」一眼看到，不用埋在標題文字裡讀
+.status-badge {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-inline-start: 10px;
+  vertical-align: middle;
+  white-space: nowrap;
 }
-.task-card h3 {
-  margin-top: 18px;
+.status-badge.status-pending {
+  background: var(--gray-100);
+  color: var(--body-font-color);
 }
-.task-card hr {
-  display: none; // 卡片本身的邊框已經是分隔線，不需要再疊一條
-}
-// hr 現在只在卡片之間（沒被包進卡片的那些）當安靜的留白分隔
-.book-article > hr {
-  border: none;
-  margin: 8px 0;
+.status-badge.status-done {
+  background: #e2f3e6;
+  color: #1e6b3a;
 }
 
-// 完成定義清單：測試命名／紅燈／綠燈／覆蓋率用文字內容分類（見 inject/body.html），
-// 視覺上區分不同性質的項目，不要全部長得一樣
+// 完成定義清單：測試命名／紅燈／綠燈／覆蓋率用文字內容分類（見 inject/body.html）
 .book-article li.dod-testname {
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   font-size: 0.92em;
-  color: var(--gray-500);
-}
-.book-article li.dod-red,
-.book-article li.dod-green {
-  padding-inline-start: 4px;
 }
 .book-article li.dod-coverage {
   font-size: 0.85em;
-  color: var(--gray-500);
+}
+// 紅燈/綠燈確認項目：已經標註「✅ 已於...」代表真的驗證過了，不是只是寫規則，
+// 用綠色底條標示出來，還沒驗證的維持原樣，一眼比對出哪些做完、哪些還沒
+.book-article li.dod-check.dod-verified {
+  background: #e2f3e6;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-inline-start: -8px;
 }
