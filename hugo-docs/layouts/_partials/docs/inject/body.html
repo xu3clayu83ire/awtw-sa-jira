@@ -1,0 +1,34 @@
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const article = document.querySelector('.book-article')
+  if (!article) return
+
+  // 把每個 h3（任務標題）跟它後面的內容（到下一個 hr/h2/h3 為止）包成一張卡片，
+  // 不改 markdown 原始檔，只在瀏覽器裡重組已渲染出來的 DOM。
+  const children = Array.from(article.children)
+  let currentCard = null
+
+  children.forEach((el) => {
+    if (el.tagName === 'H3') {
+      currentCard = document.createElement('div')
+      currentCard.className = 'task-card'
+      el.parentNode.insertBefore(currentCard, el)
+      currentCard.appendChild(el)
+    } else if (el.tagName === 'HR' || el.tagName === 'H2' || el.tagName === 'H1') {
+      currentCard = null
+    } else if (currentCard) {
+      currentCard.appendChild(el)
+    }
+  })
+
+  // 完成定義清單裡混著測試命名/紅燈/綠燈/覆蓋率，用文字內容分類，
+  // 讓不同性質的項目視覺上區分開（純 CSS 選擇器做不到按文字內容分類）
+  article.querySelectorAll('li').forEach((li) => {
+    const text = li.textContent.trim()
+    if (text.startsWith('🔴')) li.classList.add('dod-red')
+    else if (text.startsWith('🟢')) li.classList.add('dod-green')
+    else if (text.startsWith('測試命名')) li.classList.add('dod-testname')
+    else if (text.includes('覆蓋率')) li.classList.add('dod-coverage')
+  })
+})
+</script>

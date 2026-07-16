@@ -2,6 +2,7 @@
 // 官方擴充點：assets/_custom.scss 會在所有主題樣式之後載入。
 // 色票與字體搭配沿用先前確認過的儀表板設計稿。
 
+// 刻意只做淺色，不提供深色模式（使用者明確要求拿掉黑色底）
 :root {
   --body-background: #f6f5f2;
   --body-font-color: #23241f;
@@ -13,21 +14,6 @@
   --color-accent-default: #3454d1;
   --accent-soft: #e8ecfb;
   --bg-raised: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --body-background: #17181c;
-    --body-font-color: #ece9e2;
-    --color-link: #7f96ff;
-    --color-visited-link: #7f96ff;
-    --gray-100: #24262c;
-    --gray-200: #2d2f35;
-    --gray-500: #9a978d;
-    --color-accent-default: #7f96ff;
-    --accent-soft: #262c47;
-    --bg-raised: #1e2025;
-  }
 }
 
 // 標題用襯線字體，跟內文的無襯線字體做出區隔，層級落差比先前的克制字級更清楚
@@ -165,4 +151,41 @@
   outline: none;
   border-color: var(--color-accent-default);
   box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+// ── 任務卡片：由 inject/body.html 的 JS 在載入後動態包裝而成 ──
+// （不改 markdown 原始檔，只重組渲染後的 DOM）
+.task-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 4px 20px 18px;
+  margin: 20px 0;
+  background: var(--bg-raised);
+}
+.task-card h3 {
+  margin-top: 18px;
+}
+.task-card hr {
+  display: none; // 卡片本身的邊框已經是分隔線，不需要再疊一條
+}
+// hr 現在只在卡片之間（沒被包進卡片的那些）當安靜的留白分隔
+.book-article > hr {
+  border: none;
+  margin: 8px 0;
+}
+
+// 完成定義清單：測試命名／紅燈／綠燈／覆蓋率用文字內容分類（見 inject/body.html），
+// 視覺上區分不同性質的項目，不要全部長得一樣
+.book-article li.dod-testname {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  color: var(--gray-500);
+}
+.book-article li.dod-red,
+.book-article li.dod-green {
+  padding-inline-start: 4px;
+}
+.book-article li.dod-coverage {
+  font-size: 0.85em;
+  color: var(--gray-500);
 }
