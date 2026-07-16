@@ -182,11 +182,3 @@
 .book-article li.dod-coverage {
   font-size: 0.85em;
 }
-// 紅燈/綠燈確認項目：已經標註「✅ 已於...」代表真的驗證過了，不是只是寫規則，
-// 用綠色底條標示出來，還沒驗證的維持原樣，一眼比對出哪些做完、哪些還沒
-.book-article li.dod-check.dod-verified {
-  background: #e2f3e6;
-  border-radius: 6px;
-  padding: 4px 8px;
-  margin-inline-start: -8px;
-}

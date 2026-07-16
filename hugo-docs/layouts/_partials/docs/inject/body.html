@@ -27,20 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  // 完成定義清單：依文字內容分類，並找出已經驗證通過的項目（含 ✅）特別標示出來，
-  // 讓「這個任務目前做到哪」一目了然（純 CSS 選擇器無法依文字內容判斷，用 JS 加 class）
+  // 完成定義清單：依文字內容分類，讓不同性質的項目視覺上區分開
+  // （純 CSS 選擇器無法依文字內容判斷，用 JS 加 class）
   article.querySelectorAll('li').forEach((li) => {
     const text = li.textContent.trim()
     if (text.startsWith('測試命名')) li.classList.add('dod-testname')
     else if (text.includes('覆蓋率')) li.classList.add('dod-coverage')
-
-    if (text.startsWith('🔴') || text.startsWith('🟢')) {
-      li.classList.add('dod-check')
-      // 已補上「✅ 已於...」代表這條驗收條件真的驗證過了，不是只是寫規則
-      if (/✅/.test(text)) {
-        li.classList.add('dod-verified')
-      }
-    }
   })
 })
 </script>
