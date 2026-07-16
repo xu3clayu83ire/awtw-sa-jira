@@ -52,7 +52,13 @@ function dashboard(feature, apiBaseUrl) {
           fetch(`${apiBaseUrl}/api/jira/issue/${issue.key}`).then((r) => r.json())
         )
       )
-      this.issues = details
+      // jira-issues.json 的順序取決於 n8n 併發建票時的回應順序，不等於票號順序，
+      // 顯示前依票號數字排序
+      this.issues = details.sort((a, b) => {
+        const numA = parseInt(a.key.split('-')[1], 10)
+        const numB = parseInt(b.key.split('-')[1], 10)
+        return numA - numB
+      })
       setTimeout(() => this.load(), 30000)
     },
     countByStatus(status) {
