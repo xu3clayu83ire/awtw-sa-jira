@@ -61,3 +61,44 @@
 .book-menu ul > li > span {
   text-transform: none;
 }
+
+// 整體字級再收斂一點，任務清單這類密集文件比較好讀
+:root {
+  --font-size: 15px;
+}
+
+// tasks-*.md 這類文件裡 hr 很多（每個任務之間都有一條），預設粗線太搶眼，
+// 改成細線、加大留白，讓它退成安靜的分隔，不要跟標題搶注意力
+.book-article hr {
+  border: none;
+  border-top: 1px solid var(--gray-200);
+  margin: 32px 0;
+}
+
+// 行內 code（技術文件裡大量出現，例如 `design.md`、`--hf-token`）改小一點、
+// 淺色底，不要每個都像個獨立方塊一樣搶眼
+.book-article code {
+  font-size: 0.85em;
+  background: var(--gray-100);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+// 清單項目（完成定義裡的測試命名/紅燈/綠燈/覆蓋率全部混在一起）
+// 加大行距與項目間距，至少讓一條一條分開讀
+.book-article ul li,
+.book-article ol li {
+  margin-bottom: 6px;
+  line-height: 1.65;
+}
+
+// 「依賴」「完成定義」這類 bold 標籤，改成小型大寫的 eyebrow 樣式，
+// 跟標題（heading）的粗體區隔開，不要兩種粗體混在一起分不清層級
+.book-article p > strong:only-child {
+  display: inline-block;
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-500);
+  font-weight: 600;
+}
